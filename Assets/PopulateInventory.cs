@@ -1,10 +1,9 @@
-using Mono.Cecil;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PopulateInventory : MonoBehaviour
 {
-    public List<InventoryItem> InventoryItem = new List<InventoryItem>();
+   [SerializeField] public List<InventoryItem> InventoryItem = new List<InventoryItem>();
 
 
     void Awake()

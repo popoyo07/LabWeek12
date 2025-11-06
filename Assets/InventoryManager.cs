@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class InventoryManager : MonoBehaviour
@@ -6,6 +7,7 @@ public class InventoryManager : MonoBehaviour
     public string itemName;
     public int itemID;
     bool searched;
+
     // Linear Search Method
      void LinearSearchByName(string itemName)
     {
@@ -23,6 +25,9 @@ public class InventoryManager : MonoBehaviour
     // Binary Search Method
      void BinarySearchByID(int ID)
     {
+        // sorts by id first
+        populate.InventoryItem.Sort((a, b) => a.ID.CompareTo(b.ID));
+
         int left = 0;
         int right = populate.InventoryItem.Count - 1;
 
@@ -46,87 +51,79 @@ public class InventoryManager : MonoBehaviour
 
         Debug.Log($"Item is not in the list! -Binary search"); // Return the index if the target is found
     }
+  
 
-    public static void Sorting(string[] args)
-    {
 
-        QuickSort quickSortObject = new QuickSort();
-
-        int[] array = { 1, 4, 2, 5, 3 };
-
-        quickSortObject.quickSort(array, 0, array.Length - 1);
-
-    }
     void Start()
     {
         populate = GetComponent<PopulateInventory>();
 
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (itemName != "" && !searched)
         {
             LinearSearchByName(itemName);
             BinarySearchByID(itemID);
+            PrintInventory("Sort By ID ");
 
+            // Sort by Value (QuickSort)
+            QuickSortByValue();
+            PrintInventory("Quick Sort");
             searched = true;
         }
      
     }
-}
-class QuickSort
-{
-
-    public int partition(int[] array, int first, int last)
+    // QuickSort by Value
+    void QuickSortByValue()
     {
-        int pivot = array[last];
-        int smaller = (first - 1);
-
-        for (int element = first; element < last; element++)
+        QuickSort(populate.InventoryItem, 0, populate.InventoryItem.Count - 1);
+        Debug.Log("[QuickSort] Sorted inventory by Value!");
+    }
+    void QuickSort(List<InventoryItem> list, int low, int high)
+    {
+        if (low < high)
         {
-            if (array[element] < pivot)
-            {
-                element++;
+            int pi = Partition(list, low, high);
+            QuickSort(list, low, pi - 1);
+            QuickSort(list, pi + 1, high);
+        }
+    }
+    int Partition(List<InventoryItem> items, int left, int right)
+    {
+        float pivot = items[right].Value;
+        int smaller = left - 1;
 
-                int temporary = array[smaller];
-                array[smaller] = array[element];
-                array[element] = temporary;
+        for (int j = left; j < right; j++)
+        {
+            if (items[j].Value < pivot)
+            {
+                smaller++;
+                Swap(items, smaller, j);
             }
         }
 
-        int temporaryNext = array[smaller + 1];
-        array[smaller + 1] = array[last];
-        array[last] = temporaryNext;
-
+        Swap(items, smaller + 1, right);
         return smaller + 1;
-
     }
 
-    public void quickSort(int[] array, int first, int last)
+    void Swap(List<InventoryItem> items, int a, int b)
     {
-        if (first < last)
+        InventoryItem temp = items[a];
+        items[a] = items[b];
+        items[b] = temp;
+    }
+
+    // Show the inventory
+    void PrintInventory(string say)
+    {
+        Debug.Log($"--- {say} ---");
+        foreach (var item in populate.InventoryItem)
         {
-            int pivot = partition(array, first, last);
-
-            quickSort(array, first, pivot - 1);
-            quickSort(array, pivot + 1, last);
-
+            Debug.Log($"ID: {item.ID}, Name: {item.Name}, Value: {item.Value}");
         }
+        Debug.Log("--------------------------");
     }
 }
 
-class MainClass
-{
-    public static void Main(string[] args)
-    {
-
-        QuickSort quickSortObject = new QuickSort();
-
-        int[] array = { 1, 4, 2, 5, 3 };
-
-        quickSortObject.quickSort(array, 0, array.Length - 1);
-
-    }
-}
