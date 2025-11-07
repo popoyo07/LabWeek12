@@ -149,6 +149,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eefdba2d2818f8f48a584b57beebab2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PopulateInventory
+  id: 11
+  n: Miguel
+  value: 20
 --- !u!114 &52635712
 MonoBehaviour:
   m_ObjectHideFlags: 0
